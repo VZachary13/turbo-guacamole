@@ -1,0 +1,42 @@
+
+#wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1{
+    margin-right: 20px;
+}
+header p:hover{
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+#display{
+    padding: 30px;
+}
+#displayBox{
+    display: flex;
+    flex-direction: column;
+}
+
+#displayBox p{
+    font-size: 30px;
+}
+
+button{
+    max-width: 250px;
+    padding: 10px;
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
