@@ -15,7 +15,7 @@ var rightORwrong = 0;
 
 
 var question1 = {
-    question: 'What is the correct JavaScript syntax to write "Hello World"?',
+    question: 'What is the correct JavaScript syntax to display "Hello World"?',
     wronganswer1: 'response.write("Hello World")',
     wronganswer2: '"Hello World"',
     wronganswer3: '("Hello World")',
@@ -30,6 +30,8 @@ var question2 = {
     rightanswer: 'a cup of boogers'
 }
 var questions = [question1, question2];
+
+
 startQuiz.addEventListener('click', playQuiz);
 highScores.addEventListener('click', displayScores);
 document.addEventListener('click', function(event){
@@ -38,20 +40,22 @@ document.addEventListener('click', function(event){
     }
 })
 
-setInterval(function(){
+myInterval = setInterval(function(){
     if (keepPlaying) {
         timer.textContent = startTime;
         startTime--
-        
-        
     }
+    endGame()
+    //still needs post quiz input line and local storage values think about storing name and score as object
+    //then recall that object and separate into keys and values to neatly display 'Name: bob Score:30' or 
+    // experiment with using a table (if time allows also generating)
+
 }, 1000)
 
 function playQuiz(){
-    rightORwrong = 0;
+    reset();
     keepPlaying = true;
     displayQuestion();
-    //counter++; need to be on success or fail reset function
 }
 
 function displayScores(){
@@ -74,37 +78,46 @@ function displayQuestion(){
         buttonElArray[i].textContent = testArr[i];
     }
 
-    // paraElArray[0].textContent = questions[counter].question;
-    // buttonElArray[0].textContent = questions[counter].wronganswer1
-    // buttonElArray[1].textContent = questions[counter].wronganswer2
-    // buttonElArray[2].textContent = questions[counter].wronganswer3
-    // buttonElArray[3].textContent = questions[counter].rightanswer
-
 }
 
+//modern Durstenfeld Shuffle courtesy of ashleedawg via stackoverflow
 function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
 }
 
 function answerCheck(button){
-    if (button.textContent==questions[counter].rightanswer) {
-        rightORwrong = true
-    } else {
-        rightORwrong = false
+    if ((button.textContent==questions[counter].rightanswer)  && (keepPlaying)) {
+        counter++;
+        score += 10;
+        if (counter < questions.length ){   
+            displayQuestion();
+        }
+    } else if (keepPlaying){
+        counter++
+        startTime -= 10;
+        if (counter < questions.length ){   
+            displayQuestion();
+        }
     }
-    // must figure out way to check without it automatically running as true or false
-    // if (rightORwrong == true) {
-    //     score += 10;
-    //     counter++;
-    //     playQuiz();
-    // } if (rightORwrong == false) {
-    //     counter++
-    //     timer -= 10;
-    //     playQuiz();
-    // }
+
+}
+
+function reset(){
+    counter = 0
+    startTime = 120;
+    keepPlaying = false;
+    timer.textContent = startTime;
+}
+
+function endGame(){
+    if ((counter==questions.length) && (startTime > 0)) {
+        console.log("you win");
+        reset();
+    } if (startTime == 0) {
+        console.log("loser");
+        reset();
+    }
 }
