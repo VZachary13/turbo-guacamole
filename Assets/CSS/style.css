@@ -40,3 +40,16 @@ button{
     margin-bottom: 10px;
     cursor: pointer;
 }
+label {
+    font-size: 30px;
+}
+input {
+    margin-left: 100px;
+}
+#Submit{
+    max-width: 80px;
+    margin-left: 170px;
+}
+#Submit:hover{
+    cursor: pointer;
+}

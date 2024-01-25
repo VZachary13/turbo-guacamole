@@ -6,12 +6,16 @@ var highScores = document.getElementById("scores");
 var startQuiz = document.getElementById("start");
 var displaySection = document.getElementById('displayBox');
 var headerEl = document.getElementById("header");
+var submitEl = document.createElement('input');
+var labelEl = document.createElement("label");
+var inputVar = document.createElement("input");
 var buttonElArray = [];
 var paraElArray = [];
 var questionRandomizer = [];
 var counter = 0;
 var keepPlaying = false;
 var rightORwrong = 0;
+var localstorage = [];
 
 
 var question1 = {
@@ -34,9 +38,15 @@ var questions = [question1, question2];
 
 startQuiz.addEventListener('click', playQuiz);
 highScores.addEventListener('click', displayScores);
+//also stolen from stack overflow
 document.addEventListener('click', function(event){
     if((event.target.tagName=='BUTTON') && (event.target.textContent != "Start")){
         answerCheck(event.target);
+    }
+    if(event.target.tagName=='INPUT' && event.target.getAttribute("id") == "Submit") {
+        localstorage.push(localStorage.getItem("highscores"));
+        localstorage.push({Name: document.getElementById('name').value, Score: score})
+        localStorage.setItem("highscores", localstorage);
     }
 })
 
@@ -61,6 +71,12 @@ function playQuiz(){
 function displayScores(){
     headerEl.style.display = 'none';
     displaySection.innerHTML = '';
+    localstorage = localStorage.getItem("highscores");
+    for (let i = 0; i < localstorage.length; i++) {
+        paraElArray[i] = document.createElement('p');
+        displaySection.appendChild(paraElArray[i]);
+        paraElArray[i].textContent = localstorage[i];
+    }
 }
 
 function displayQuestion(){
@@ -90,16 +106,18 @@ function shuffleArray(array) {
 
 function answerCheck(button){
     if ((button.textContent==questions[counter].rightanswer)  && (keepPlaying)) {
+        displayCorrect()
         counter++;
         score += 10;
         if (counter < questions.length ){   
-            displayQuestion();
+           setTimeout(displayQuestion, 2000);
         }
     } else if (keepPlaying){
+        displayIncorrect()
         counter++
         startTime -= 10;
         if (counter < questions.length ){   
-            displayQuestion();
+            setTimeout(displayQuestion, 2000);
         }
     }
 
@@ -107,17 +125,47 @@ function answerCheck(button){
 
 function reset(){
     counter = 0
+    score = 0
     startTime = 120;
     keepPlaying = false;
     timer.textContent = startTime;
 }
 
 function endGame(){
-    if ((counter==questions.length) && (startTime > 0)) {
-        console.log("you win");
-        reset();
-    } if (startTime == 0) {
-        console.log("loser");
-        reset();
+    if (((counter==questions.length) && (startTime > 0)) || (startTime == 0)) {
+        keepPlaying = false;
+        displaySection.innerHTML = '';
+        addScore();
+        paraElArray[0] = document.createElement("p");
+        displaySection.appendChild(paraElArray[0]);
+        paraElArray[0].textContent = "Your Score: "+score;
     }
 }
+
+function displayCorrect() {
+    var correct = document.createElement("p");
+    displaySection.appendChild(correct);
+    correct.textContent = "Correct!";
+}
+
+function displayIncorrect() {
+    var correct = document.createElement("p");
+    displaySection.appendChild(correct);
+    correct.textContent = "Incorrect!";
+}
+// ----------------------------Question display section end--------------------------------
+
+function addScore(){
+    displaySection.appendChild(labelEl);
+    displaySection.appendChild(inputVar);
+    displaySection.appendChild(submitEl);
+    submitEl.setAttribute('type','submit');
+    submitEl.setAttribute('value','Submit');
+    submitEl.setAttribute('id','Submit');
+    submitEl.textContent = 'Submit';
+    labelEl.textContent = 'Enter your name to save it to High Scores';
+    inputVar.style.maxWidth = "200px";
+    inputVar.setAttribute('id', 'name');
+}
+
+
